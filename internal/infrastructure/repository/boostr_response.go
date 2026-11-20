@@ -51,6 +51,6 @@ func (h boostrHoliday) toDomain() (domain.Holiday, error) {
 		Title:       h.Title,
 		Type:        h.Type,
 		Inalienable: h.Inalienable,
-		Description: h.Extra,
+		Extra:       h.Extra,
 	}, nil
 }

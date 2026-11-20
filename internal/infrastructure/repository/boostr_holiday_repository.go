@@ -10,15 +10,18 @@ import (
 	"github.com/JCTandrade/api-desafio-tecnico-calendario/internal/domain/ports"
 )
 
+// BoostrHolidayRepository reads holidays from the boostr.cl holidays JSON service.
 type BoostrHolidayRepository struct {
 	client *http.Client
 	url    string
 }
 
+// NewBoostrHolidayRepository builds a repository that queries url using client.
 func NewBoostrHolidayRepository(client *http.Client, url string) *BoostrHolidayRepository {
 	return &BoostrHolidayRepository{client: client, url: url}
 }
 
+// GetAll fetches and maps every holiday; failures are wrapped with ports.ErrUpstream.
 func (r *BoostrHolidayRepository) GetAll(ctx context.Context) ([]domain.Holiday, error) {
 	payload, err := r.fetch(ctx)
 	if err != nil {

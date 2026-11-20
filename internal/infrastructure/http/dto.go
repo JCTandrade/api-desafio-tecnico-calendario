@@ -1,20 +1,34 @@
-// Package http exposes the holidays use cases over HTTP.
+// Package http exposes the holidays use cases over HTTP using Gin.
 package http
 
-import "github.com/JCTandrade/api-desafio-tecnico-calendario/internal/domain"
+import (
+	"encoding/xml"
+
+	"github.com/JCTandrade/api-desafio-tecnico-calendario/internal/domain"
+)
 
 const dateLayout = "2006-01-02"
 
+// holidayResponse is the wire representation of a holiday, shared by JSON and XML.
 type holidayResponse struct {
-	Date        string `json:"date"`
-	Title       string `json:"title"`
-	Type        string `json:"type"`
-	Inalienable bool   `json:"inalienable"`
-	Description string `json:"description"`
+	XMLName     xml.Name `json:"-" xml:"holiday"`
+	Date        string   `json:"date" xml:"date"`
+	Title       string   `json:"title" xml:"title"`
+	Type        string   `json:"type" xml:"type"`
+	Inalienable bool     `json:"inalienable" xml:"inalienable"`
+	Extra       string   `json:"extra" xml:"extra"`
 }
 
+// holidaysXML is the XML root element wrapping a list of holidays.
+type holidaysXML struct {
+	XMLName  xml.Name          `xml:"holidays"`
+	Holidays []holidayResponse `xml:"holiday"`
+}
+
+// errorResponse is the wire representation of an error, shared by JSON and XML.
 type errorResponse struct {
-	Error string `json:"error"`
+	XMLName xml.Name `json:"-" xml:"error"`
+	Error   string   `json:"error" xml:"message"`
 }
 
 func toHolidayResponses(holidays []domain.Holiday) []holidayResponse {
@@ -25,7 +39,7 @@ func toHolidayResponses(holidays []domain.Holiday) []holidayResponse {
 			Title:       holiday.Title,
 			Type:        holiday.Type,
 			Inalienable: holiday.Inalienable,
-			Description: holiday.Description,
+			Extra:       holiday.Extra,
 		})
 	}
 	return responses
