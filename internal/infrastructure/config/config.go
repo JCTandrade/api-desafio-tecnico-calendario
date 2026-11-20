@@ -1,4 +1,3 @@
-// Package config loads runtime settings from environment variables.
 package config
 
 import (
@@ -12,15 +11,12 @@ const (
 	defaultHTTPTimeout = 10 * time.Second
 )
 
-// Settings holds the runtime configuration of the application.
 type Settings struct {
 	Port        string
 	HolidaysURL string
 	HTTPTimeout time.Duration
 }
 
-// Load reads the settings from the PORT, HOLIDAYS_API_URL and HTTP_TIMEOUT environment
-// variables, falling back to defaults for missing or invalid values.
 func Load() Settings {
 	return Settings{
 		Port:        stringFromEnv("PORT", defaultPort),

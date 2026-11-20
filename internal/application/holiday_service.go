@@ -1,4 +1,3 @@
-// Package application implements the holidays use cases.
 package application
 
 import (
@@ -18,8 +17,6 @@ func NewHolidayService(repository ports.HolidayRepository) *HolidayService {
 	return &HolidayService{repository: repository}
 }
 
-// GetHolidays returns the holidays matching the filter, ordered by date.
-// It fails with domain.ErrInvalidDateRange when the filter range is inverted.
 func (s *HolidayService) GetHolidays(ctx context.Context, filter domain.HolidayFilter) ([]domain.Holiday, error) {
 	if err := filter.Validate(); err != nil {
 		return nil, err

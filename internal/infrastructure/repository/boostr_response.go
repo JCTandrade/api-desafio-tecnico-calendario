@@ -1,4 +1,3 @@
-// Package repository contains the adapters that fetch holidays from external sources.
 package repository
 
 import (

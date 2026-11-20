@@ -1,4 +1,3 @@
-// Package main wires the application together.
 package main
 
 import (

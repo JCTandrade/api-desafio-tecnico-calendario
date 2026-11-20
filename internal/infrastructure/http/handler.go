@@ -20,23 +20,19 @@ const (
 	formatXML  = "xml"
 )
 
-// Handler adapts HTTP requests to the holidays use cases.
 type Handler struct {
 	service ports.HolidayService
 	logger  *slog.Logger
 }
 
-// NewHandler builds a Handler that delegates to service and logs through logger.
 func NewHandler(service ports.HolidayService, logger *slog.Logger) *Handler {
 	return &Handler{service: service, logger: logger}
 }
 
-// Health reports that the process is up.
 func (h *Handler) Health(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }
 
-// ListHolidays returns the holidays matching the query filters, as JSON or XML.
 func (h *Handler) ListHolidays(c *gin.Context) {
 	format, err := negotiateFormat(c)
 	if err != nil {
@@ -61,8 +57,6 @@ func (h *Handler) ListHolidays(c *gin.Context) {
 	c.JSON(http.StatusOK, responses)
 }
 
-// negotiateFormat picks the response format: the "format" query parameter wins over the
-// Accept header, and JSON is the default.
 func negotiateFormat(c *gin.Context) (string, error) {
 	switch raw := strings.ToLower(c.Query("format")); raw {
 	case "":

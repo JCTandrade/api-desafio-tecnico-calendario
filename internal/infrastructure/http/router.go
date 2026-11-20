@@ -24,12 +24,6 @@ const docsPage = `<!DOCTYPE html>
 </body>
 </html>`
 
-// NewRouter registers the application routes and middlewares:
-//
-//	GET /health         liveness probe
-//	GET /api/holidays   filtered holidays (JSON or XML)
-//	GET /openapi.yaml   OpenAPI 3 specification
-//	GET /docs           Swagger UI for the specification
 func NewRouter(handler *Handler, logger *slog.Logger) *gin.Engine {
 	router := gin.New()
 	router.Use(requestLogger(logger), gin.Recovery())
@@ -44,7 +38,6 @@ func NewRouter(handler *Handler, logger *slog.Logger) *gin.Engine {
 	return router
 }
 
-// requestLogger logs one structured line per request once it has been served.
 func requestLogger(logger *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
