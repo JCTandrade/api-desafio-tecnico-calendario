@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: api-desafio-tecnico-calendario:latest
+    container_name: api-desafio-tecnico-calendario
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
+    environment:
+      PORT: "${PORT:-8080}"
+      HOLIDAYS_API_URL: "${HOLIDAYS_API_URL:-https://api.boostr.cl/holidays.json}"
+      HTTP_TIMEOUT: "${HTTP_TIMEOUT:-10s}"
+    restart: unless-stopped

@@ -1,0 +1,12 @@
+.git
+.gitignore
+.gitattributes
+.idea
+.vscode
+*.exe
+*.test
+*.out
+Dockerfile
+docker-compose.yml
+.dockerignore
+README.md

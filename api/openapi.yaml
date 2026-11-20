@@ -1,0 +1,158 @@
+openapi: 3.0.3
+info:
+  title: Chile Holidays API
+  description: >
+    Queries the Chilean holidays calendar. The data comes from
+    https://api.boostr.cl/holidays.json and is loaded into memory once, when the
+    application starts. Responses are available as JSON or XML.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local server
+paths:
+  /api/holidays:
+    get:
+      summary: List holidays
+      description: >
+        Returns the holidays that satisfy every provided filter, ordered by date.
+        All filters are optional. The response format is selected with the `format`
+        parameter or, when absent, with the `Accept` header (JSON by default).
+      operationId: listHolidays
+      parameters:
+        - name: type
+          in: query
+          description: Holiday type, case-insensitive (e.g. `Civil`, `Religioso`).
+          schema:
+            type: string
+          example: Religioso
+        - name: from
+          in: query
+          description: Inclusive start of the date range (`YYYY-MM-DD`).
+          schema:
+            type: string
+            format: date
+          example: "2026-01-01"
+        - name: to
+          in: query
+          description: Inclusive end of the date range (`YYYY-MM-DD`). Must not be before `from`.
+          schema:
+            type: string
+            format: date
+          example: "2026-06-30"
+        - name: year
+          in: query
+          description: Restricts to a calendar year.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 9999
+        - name: month
+          in: query
+          description: Restricts to a month of the year.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+        - name: inalienable
+          in: query
+          description: Restricts by the inalienable (irrenunciable) flag.
+          schema:
+            type: boolean
+        - name: format
+          in: query
+          description: Response format. Takes precedence over the `Accept` header.
+          schema:
+            type: string
+            enum: [json, xml]
+      responses:
+        "200":
+          description: Holidays matching the filters (possibly an empty list).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Holiday"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Holidays"
+        "400":
+          description: A query parameter is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /health:
+    get:
+      summary: Liveness probe
+      operationId: health
+      responses:
+        "200":
+          description: The service is up.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+components:
+  schemas:
+    Holiday:
+      type: object
+      xml:
+        name: holiday
+      required: [date, title, type, inalienable, extra]
+      properties:
+        date:
+          type: string
+          format: date
+          description: Date of the holiday.
+          example: "2026-05-01"
+        title:
+          type: string
+          description: Holiday name.
+          example: Día del Trabajador
+        type:
+          type: string
+          description: Holiday type.
+          example: Civil
+        inalienable:
+          type: boolean
+          description: Whether the holiday is inalienable (irrenunciable).
+          example: true
+        extra:
+          type: string
+          description: Complementary information provided by the source.
+          example: Civil e Irrenunciable
+    Holidays:
+      type: object
+      xml:
+        name: holidays
+      properties:
+        holiday:
+          type: array
+          xml:
+            name: holiday
+          items:
+            $ref: "#/components/schemas/Holiday"
+    Error:
+      type: object
+      xml:
+        name: error
+      properties:
+        error:
+          type: string
+          xml:
+            name: message
+          example: "invalid month \"13\": must be an integer between 1 and 12"
